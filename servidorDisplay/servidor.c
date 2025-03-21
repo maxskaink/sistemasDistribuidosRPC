@@ -4,10 +4,13 @@
  * as a guideline for developing your own functions.
  */
 
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_pedidos_display.h"
 #include <time.h>
 #include <stdbool.h>
 
+/**
+ * @brief Imprime por salida estandar la hora acutal
+ */
 void mostrarHoraUltimaActualizacion();
 
 void *
@@ -31,9 +34,9 @@ enviarnotificacion_1_svc(notificacion *argp, struct svc_req *rqstp)
 	printf("\n Cantidad de pedidos en la fila:  %d", (*argp).cantidadUsuariosFilaVirtual);
 	mostrarHoraUltimaActualizacion();
 	printf("\n");	
+
 	return (void *) &result;
 }
-
 void mostrarHoraUltimaActualizacion(){
 	time_t tiempo_actual;
 	struct tm *info_tiempo;

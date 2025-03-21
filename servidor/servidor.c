@@ -4,10 +4,9 @@
  * as a guideline for developing your own functions.
  */
 
-#include "InterfaceClienteServidorPedidos.h"
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_cli_pedidos.h"
+#include "I_pedidos_display.h"
 #include <stdbool.h>
-
 
 int cantidadUsuariosFila=0;
 nodo_hamburguesa filaVirtual[10];

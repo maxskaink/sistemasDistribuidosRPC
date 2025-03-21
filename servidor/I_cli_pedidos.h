@@ -3,11 +3,11 @@
  * It was generated using rpcgen.
  */
 
-#ifndef _INTERFACECLIENTESERVIDORPEDIDOS_H_RPCGEN
-#define _INTERFACECLIENTESERVIDORPEDIDOS_H_RPCGEN
+#ifndef _I_CLI_PEDIDOS_H_RPCGEN
+#define _I_CLI_PEDIDOS_H_RPCGEN
 
 #include <rpc/rpc.h>
-
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +21,15 @@ struct nodo_hamburguesa {
 	char nombreHamburguesa[MAXIDENTIFICACION];
 };
 typedef struct nodo_hamburguesa nodo_hamburguesa;
+
+struct cocinero {
+    int noCocinero;
+    bool ocupado;
+    nodo_hamburguesa objHamburguesaAPreparar;
+}; 
+typedef struct cocinero cocinero;
+
+extern cocinero vectorCocineros[3];
 
 #define autorizar_usuarios 0x20000001
 #define autorizar_usuarios_version 1
@@ -52,4 +61,4 @@ extern bool_t xdr_nodo_hamburguesa ();
 }
 #endif
 
-#endif /* !_INTERFACECLIENTESERVIDORPEDIDOS_H_RPCGEN */
+#endif /* !_I_CLI_PEDIDOS_H_RPCGEN */

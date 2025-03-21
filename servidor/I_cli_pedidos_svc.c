@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_cli_pedidos.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
@@ -16,11 +16,18 @@
 #define SIG_PF void(*)(int)
 #endif
 
+void cargarCocineros(){
+	for(int i= 0;i<3; i++){
+		vectorCocineros[i].noCocinero=i+1;
+		vectorCocineros[i].ocupado= false;
+	}
+}
+
 static void
-notificar_cocineros_1(struct svc_req *rqstp, register SVCXPRT *transp)
+autorizar_usuarios_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		notificacion enviarnotificacion_1_arg;
+		nodo_hamburguesa generarturno_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -31,10 +38,10 @@ notificar_cocineros_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
 		return;
 
-	case enviarNotificacion:
-		_xdr_argument = (xdrproc_t) xdr_notificacion;
-		_xdr_result = (xdrproc_t) xdr_void;
-		local = (char *(*)(char *, struct svc_req *)) enviarnotificacion_1_svc;
+	case generarTurno:
+		_xdr_argument = (xdrproc_t) xdr_nodo_hamburguesa;
+		_xdr_result = (xdrproc_t) xdr_int;
+		local = (char *(*)(char *, struct svc_req *)) generarturno_1_svc;
 		break;
 
 	default:
@@ -62,15 +69,15 @@ main (int argc, char **argv)
 {
 	register SVCXPRT *transp;
 
-	pmap_unset (notificar_cocineros, notificar_cocineros_version);
+	pmap_unset (autorizar_usuarios, autorizar_usuarios_version);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
 		fprintf (stderr, "%s", "cannot create udp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, notificar_cocineros, notificar_cocineros_version, notificar_cocineros_1, IPPROTO_UDP)) {
-		fprintf (stderr, "%s", "unable to register (notificar_cocineros, notificar_cocineros_version, udp).");
+	if (!svc_register(transp, autorizar_usuarios, autorizar_usuarios_version, autorizar_usuarios_1, IPPROTO_UDP)) {
+		fprintf (stderr, "%s", "unable to register (autorizar_usuarios, autorizar_usuarios_version, udp).");
 		exit(1);
 	}
 
@@ -79,11 +86,11 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "cannot create tcp service.");
 		exit(1);
 	}
-	if (!svc_register(transp, notificar_cocineros, notificar_cocineros_version, notificar_cocineros_1, IPPROTO_TCP)) {
-		fprintf (stderr, "%s", "unable to register (notificar_cocineros, notificar_cocineros_version, tcp).");
+	if (!svc_register(transp, autorizar_usuarios, autorizar_usuarios_version, autorizar_usuarios_1, IPPROTO_TCP)) {
+		fprintf (stderr, "%s", "unable to register (autorizar_usuarios, autorizar_usuarios_version, tcp).");
 		exit(1);
 	}
-
+	cargarCocineros();
 	svc_run ();
 	fprintf (stderr, "%s", "svc_run returned");
 	exit (1);

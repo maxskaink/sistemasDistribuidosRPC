@@ -4,25 +4,21 @@
 # Parameters
 
 CLIENT = 
-SERVER = ejecutableServidor
+SERVER = servidor
 
 SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 
 SOURCES_SVC.c = servidor.c
-SOURCES_SVC.h = InterfaceServidorPedidosServidorDisplay.h
-SOURCES.x = InterfaceServidorPedidosServidorDisplay.x
+SOURCES_SVC.h = I_cli_pedidos.h I_pedidos_display.h
+SOURCES.x = I_cli_pedidos.x
 
-TARGETS_SVC.c = InterfaceServidorPedidosServidorDisplay_svc.c   InterfaceServidorPedidosServidorDisplay_xdr.c 
-TARGETS_CLNT.c =     InterfaceServidorPedidosServidorDisplay_xdr.c 
-TARGETS = InterfaceServidorPedidosServidorDisplay.h InterfaceServidorPedidosServidorDisplay_xdr.c   InterfaceServidorPedidosServidorDisplay_svc.c    
+TARGETS_SVC.c = I_cli_pedidos_svc.c   I_cli_pedidos_xdr.c I_pedidos_display_clnt.c I_pedidos_display_xdr.c
+TARGETS_CLNT.c =
+TARGETS = I_cli_pedidos.h I_cli_pedidos_xdr.c I_cli_pedidos_svc.c    
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
 # Compiler flags 
-
-#CFLAGS += -g 
-#LDLIBS += -lnsl
-#RPCGENFLAGS = 
 
 CFLAGS += -g -I /usr/include/tirpc
 LDLIBS += -lnsl -ltirpc
