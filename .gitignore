@@ -1,0 +1,5 @@
+**/*.o
+.vscode
+servidor/servidor
+serverDisplay/ejecutableServidor
+cliente/cliente
