@@ -5,16 +5,16 @@
  */
 
 #include "I_coc_pedidos.h"
-
+#include <stdio.h>
+#include <stdlib.h> 
 
 void
 autorizar_cocineros_1(char *host)
 {
 	CLIENT *clnt;
-	int  *result_1;
-	int  seleccionaridcocinero_1_arg;
-	int  *result_2;
-	int  terminarpedido_1_arg;
+	int  *result_validarCocinero;
+	int  id_cocinero;
+	int  *result_terminarPedido;
 
 #ifndef	DEBUG
 	clnt = clnt_create (host, autorizar_cocineros, autorizar_cocineros_version, "udp");
@@ -24,14 +24,58 @@ autorizar_cocineros_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	result_1 = seleccionaridcocinero_1(&seleccionaridcocinero_1_arg, clnt);
-	if (result_1 == (int *) NULL) {
+	printf("============= COCINERO =============\n");
+	printf("Ingrese el id del cocinero a validar: ");
+	scanf("%d", &id_cocinero);
+	id_cocinero = id_cocinero;
+	printf("\n");
+
+	result_validarCocinero = seleccionaridcocinero_1(&id_cocinero, clnt);
+	if (result_validarCocinero == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
+		exit(1);
 	}
-	result_2 = terminarpedido_1(&terminarpedido_1_arg, clnt);
-	if (result_2 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
+	if (*result_validarCocinero == 0) {
+		printf("El cocinero no esta autorizado\n");
+		autorizar_cocineros_1(host);
+		return;
 	}
+	printf("Cocinero Autorizado\n");
+
+	while(1){
+		int option=-1;
+		printf("============= MENU =============\n");
+		printf("1. Terminar Pedido\n");
+		printf("2. Salir\n");
+		printf("Ingrese una opcion: ");
+		scanf("%d", &option);
+
+		if(option == 2)
+			break;
+		
+		if(option != 1){
+			printf("Opcion no valida\n");
+			continue;
+		}
+		printf("\n");
+
+		printf("Confirma terminar el pedido acual? (1: Si, 0: No): ");
+		scanf("%d", &option);
+		if(option == 0)
+			continue;
+	
+		result_terminarPedido = terminarpedido_1(&id_cocinero, clnt);
+		if (result_terminarPedido == (int *) NULL) {
+			clnt_perror (clnt, "call failed");
+			exit(1);
+		}
+		if(*result_terminarPedido == 0){
+			printf("No hay pedidos para terminar\n");
+			continue;
+		}
+	}
+
+
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
@@ -44,7 +88,7 @@ main (int argc, char *argv[])
 	char *host;
 
 	if (argc < 2) {
-		printf ("usage: %s server_host\n", argv[0]);
+		printf("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];

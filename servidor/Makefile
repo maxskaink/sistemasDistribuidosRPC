@@ -8,7 +8,7 @@ SERVER = servidor
 
 SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 
-SOURCES_SVC.c = servidor.c servidor_coc.c
+SOURCES_SVC.c = servidor.c
 SOURCES_SVC.h = I_cli_pedidos.h I_pedidos_display.h I_coc_pedidos.h
 SOURCES.x = I_cli_pedidos.x I_coc_pedidos.x
 
