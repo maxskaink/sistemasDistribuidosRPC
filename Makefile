@@ -3,3 +3,4 @@ clean:
 	-rm cliente/cliente
 	-rm servidor/servidor
 	-rm servidorDisplay/servidor
+	-rm cocinero/cocinero

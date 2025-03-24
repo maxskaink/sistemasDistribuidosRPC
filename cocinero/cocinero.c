@@ -48,6 +48,9 @@ main (int argc, char *argv[])
 		exit (1);
 	}
 	host = argv[1];
+
+
 	autorizar_cocineros_1 (host);
+	
 exit (0);
 }
