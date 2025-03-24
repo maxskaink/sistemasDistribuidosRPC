@@ -3,11 +3,11 @@
 
 # Parameters
 
-CLIENT = I_coc_pedidos_client
-SERVER = I_coc_pedidos_server
+CLIENT = cocinero
+SERVER = 
 
-SOURCES_CLNT.c = 
-SOURCES_CLNT.h = 
+SOURCES_CLNT.c = cocinero.c
+SOURCES_CLNT.h = I_coc_pedidos.h 
 SOURCES_SVC.c = 
 SOURCES_SVC.h = 
 SOURCES.x = I_coc_pedidos.x
@@ -20,10 +20,9 @@ OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
 # Compiler flags 
 
-CFLAGS += -g 
-LDLIBS += -lnsl
+CFLAGS += -g -I /usr/include/tirpc
+LDLIBS += -lnsl -ltirpc
 RPCGENFLAGS = 
-
 # Targets 
 
 all : $(CLIENT) $(SERVER)
@@ -40,7 +39,4 @@ $(CLIENT) : $(OBJECTS_CLNT)
 
 $(SERVER) : $(OBJECTS_SVC) 
 	$(LINK.c) -o $(SERVER) $(OBJECTS_SVC) $(LDLIBS)
-
- clean:
-	 $(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER)
 

@@ -8,13 +8,13 @@ SERVER = servidor
 
 SOURCES_CLNT.c = 
 SOURCES_CLNT.h = 
-SOURCES_SVC.c = servidor.c
-SOURCES_SVC.h = I_cli_pedidos.h I_pedidos_display.h
-SOURCES.x = I_cli_pedidos.x
+SOURCES_SVC.c = servidor.c servidor_coc.c
+SOURCES_SVC.h = I_cli_pedidos.h I_pedidos_display.h I_coc_pedidos.h
+SOURCES.x = I_cli_pedidos.x I_coc_pedidos.x
 
 TARGETS_SVC.c = I_cli_pedidos_svc.c   I_cli_pedidos_xdr.c I_pedidos_display_clnt.c I_pedidos_display_xdr.c
 TARGETS_CLNT.c =
-TARGETS = I_cli_pedidos.h I_cli_pedidos_xdr.c I_cli_pedidos_svc.c    
+TARGETS = I_cli_pedidos.h I_cli_pedidos_xdr.c I_cli_pedidos_svc.c I_coc_pedidos.h 
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
@@ -40,7 +40,3 @@ $(CLIENT) : $(OBJECTS_CLNT)
 
 $(SERVER) : $(OBJECTS_SVC) 
 	$(LINK.c) -o $(SERVER) $(OBJECTS_SVC) $(LDLIBS)
-
- clean:
-	 $(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER)
-
