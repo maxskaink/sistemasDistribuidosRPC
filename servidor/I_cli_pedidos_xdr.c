@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "InterfaceClienteServidorPedidos.h"
+#include "I_cli_pedidos.h"
 
 bool_t
 xdr_nodo_hamburguesa (XDR *xdrs, nodo_hamburguesa *objp)

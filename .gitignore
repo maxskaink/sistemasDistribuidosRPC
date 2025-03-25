@@ -1,5 +1,6 @@
 **/*.o
 .vscode
 servidor/servidor
-serverDisplay/ejecutableServidor
+servidorDisplay/servidor
 cliente/cliente
+cocinero/cocinero

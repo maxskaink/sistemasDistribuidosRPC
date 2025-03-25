@@ -3,7 +3,8 @@
  * It was generated using rpcgen.
  */
 
-#include "InterfaceClienteServidorPedidos.h"
+#include "I_cli_pedidos.h"
+#include "I_coc_pedidos.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
@@ -15,6 +16,13 @@
 #ifndef SIG_PF
 #define SIG_PF void(*)(int)
 #endif
+
+void cargarCocineros(){
+	for(int i= 0;i<3; i++){
+		vectorCocineros[i].noCocinero=i+1;
+		vectorCocineros[i].ocupado= false;
+	}
+}
 
 static void
 autorizar_usuarios_1(struct svc_req *rqstp, register SVCXPRT *transp)
@@ -57,12 +65,61 @@ autorizar_usuarios_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	return;
 }
 
+static void
+autorizar_cocineros_1(struct svc_req *rqstp, register SVCXPRT *transp)
+{
+	union {
+		int seleccionaridcocinero_1_arg;
+		int terminarpedido_1_arg;
+	} argument;
+	char *result;
+	xdrproc_t _xdr_argument, _xdr_result;
+	char *(*local)(char *, struct svc_req *);
+
+	switch (rqstp->rq_proc) {
+	case NULLPROC:
+		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
+		return;
+
+	case seleccionarIdCocinero:
+		_xdr_argument = (xdrproc_t) xdr_int;
+		_xdr_result = (xdrproc_t) xdr_int;
+		local = (char *(*)(char *, struct svc_req *)) seleccionaridcocinero_1_svc;
+		break;
+
+	case terminarPedido:
+		_xdr_argument = (xdrproc_t) xdr_int;
+		_xdr_result = (xdrproc_t) xdr_int;
+		local = (char *(*)(char *, struct svc_req *)) terminarpedido_1_svc;
+		break;
+
+	default:
+		svcerr_noproc (transp);
+		return;
+	}
+	memset ((char *)&argument, 0, sizeof (argument));
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		svcerr_decode (transp);
+		return;
+	}
+	result = (*local)((char *)&argument, rqstp);
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
+		svcerr_systemerr (transp);
+	}
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {
+		fprintf (stderr, "%s", "unable to free arguments");
+		exit (1);
+	}
+	return;
+}
+
 int
 main (int argc, char **argv)
 {
 	register SVCXPRT *transp;
 
 	pmap_unset (autorizar_usuarios, autorizar_usuarios_version);
+	pmap_unset(autorizar_cocineros, autorizar_cocineros_version);
 
 	transp = svcudp_create(RPC_ANYSOCK);
 	if (transp == NULL) {
@@ -71,6 +128,11 @@ main (int argc, char **argv)
 	}
 	if (!svc_register(transp, autorizar_usuarios, autorizar_usuarios_version, autorizar_usuarios_1, IPPROTO_UDP)) {
 		fprintf (stderr, "%s", "unable to register (autorizar_usuarios, autorizar_usuarios_version, udp).");
+		exit(1);
+	}
+
+	if(!svc_register(transp, autorizar_cocineros,autorizar_cocineros_version, autorizar_cocineros_1, IPPROTO_UDP)){
+		fprintf (stderr, "%s", "unable to register cocineros service");
 		exit(1);
 	}
 
@@ -83,7 +145,12 @@ main (int argc, char **argv)
 		fprintf (stderr, "%s", "unable to register (autorizar_usuarios, autorizar_usuarios_version, tcp).");
 		exit(1);
 	}
-
+    if (!svc_register(transp, autorizar_cocineros, autorizar_cocineros_version,
+		autorizar_cocineros_1, IPPROTO_TCP)) {
+		fprintf(stderr, "%s", "unable to register cocineros TCP service.");
+		exit(1);
+	}
+	cargarCocineros();
 	svc_run ();
 	fprintf (stderr, "%s", "svc_run returned");
 	exit (1);

@@ -3,18 +3,18 @@
 
 # Parameters
 
-CLIENT = cliente
-SERVER =
+CLIENT = 
+SERVER = servidor
 
-SOURCES_CLNT.c = cliente.c
-SOURCES_CLNT.h = InterfaceClienteServidorPedidos.h 
-SOURCES_SVC.c =  
-SOURCES_SVC.h = 
-SOURCES.x = InterfaceClienteServidorPedidos.x
+SOURCES_CLNT.c = 
+SOURCES_CLNT.h = 
+SOURCES_SVC.c = servidor.c
+SOURCES_SVC.h = I_pedidos_display.h
+SOURCES.x = I_pedidos_display.x
 
-TARGETS_SVC.c =     InterfaceClienteServidorPedidos_xdr.c 
-TARGETS_CLNT.c = InterfaceClienteServidorPedidos_clnt.c   InterfaceClienteServidorPedidos_xdr.c 
-TARGETS = InterfaceClienteServidorPedidos.h InterfaceClienteServidorPedidos_xdr.c InterfaceClienteServidorPedidos_clnt.c      
+TARGETS_SVC.c = I_pedidos_display_svc.c   I_pedidos_display_xdr.c 
+TARGETS_CLNT.c =
+TARGETS = I_pedidos_display.h I_pedidos_display_xdr.c I_pedidos_display_svc.c    
 
 OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
@@ -23,7 +23,6 @@ OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
 CFLAGS += -g -I /usr/include/tirpc
 LDLIBS += -lnsl -ltirpc
 RPCGENFLAGS = 
-
 # Targets 
 
 all : $(CLIENT) $(SERVER)
@@ -40,7 +39,3 @@ $(CLIENT) : $(OBJECTS_CLNT)
 
 $(SERVER) : $(OBJECTS_SVC) 
 	$(LINK.c) -o $(SERVER) $(OBJECTS_SVC) $(LDLIBS)
-
- clean:
-	 $(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER)
-

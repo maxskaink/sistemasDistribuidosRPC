@@ -3,11 +3,11 @@
  * It was generated using rpcgen.
  */
 
-#ifndef _INTERFACESERVIDORPEDIDOSSERVIDORDISPLAY_H_RPCGEN
-#define _INTERFACESERVIDORPEDIDOSSERVIDORDISPLAY_H_RPCGEN
+#ifndef _I_PEDIDOS_DISPLAY_H_RPCGEN
+#define _I_PEDIDOS_DISPLAY_H_RPCGEN
 
 #include <rpc/rpc.h>
-#include <stdbool.h>
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,4 +69,4 @@ extern bool_t xdr_notificacion ();
 }
 #endif
 
-#endif /* !_INTERFACESERVIDORPEDIDOSSERVIDORDISPLAY_H_RPCGEN */
+#endif /* !_I_PEDIDOS_DISPLAY_H_RPCGEN */

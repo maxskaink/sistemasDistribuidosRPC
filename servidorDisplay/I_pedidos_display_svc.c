@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_pedidos_display.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>

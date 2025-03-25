@@ -4,7 +4,7 @@
  * as a guideline for developing your own functions.
  */
 
-#include "InterfaceClienteServidorPedidos.h"
+#include "I_cli_pedidos.h"
 
 
 void
@@ -12,7 +12,7 @@ autorizar_usuarios_1(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
-	nodo_hamburguesa  objHamburguesa;
+	nodo_hamburguesa  hamburguesa;
 
 #ifndef	DEBUG
 	clnt = clnt_create (host, autorizar_usuarios, autorizar_usuarios_version, "udp");
@@ -20,16 +20,18 @@ autorizar_usuarios_1(char *host)
 		clnt_pcreateerror (host);
 		exit (1);
 	}
-#endif	 /*DEBUG */
+#endif	/* DEBUG */
+
 
 	printf("\n Digite el nombre de la hamburguesa: ");
-	scanf("%s", objHamburguesa.nombreHamburguesa);
+	scanf("%s", hamburguesa.nombreHamburguesa);
 	printf("\n Digite el tipo de hamburghesa \n 1.Pequeña \n 2.Medio \n 3.Grande: \n ");
-	scanf("%d", &objHamburguesa.tipoHamburguesa);
+	scanf("%d", &hamburguesa.tipoHamburguesa);
 	printf("Digite la cantidad de ingrendientes extra: ");
-	scanf("%d", &objHamburguesa.cantidadIngredientesExtra);
+	scanf("%d", &hamburguesa.cantidadIngredientesExtra);
 
-	result_1 = generarturno_1(&objHamburguesa, clnt);
+
+	result_1 = generarturno_1(&hamburguesa, clnt);
 	if (result_1 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}else{
@@ -47,13 +49,11 @@ main (int argc, char *argv[])
 {
 	char *host;
 	int option; 
-
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
 		exit (1);
 	}
 	host = argv[1];
-
 	do{
 		printf("=======MENU======== \n");
 		printf(" 1. Enviar pedido \n");

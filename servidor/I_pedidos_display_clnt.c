@@ -4,7 +4,7 @@
  */
 
 #include <memory.h> /* for memset */
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_pedidos_display.h"
 
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };

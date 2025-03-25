@@ -4,22 +4,22 @@
  */
 
 #include <memory.h> /* for memset */
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_cli_pedidos.h"
 
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };
 
-void *
-enviarnotificacion_1(notificacion *argp, CLIENT *clnt)
+int *
+generarturno_1(nodo_hamburguesa *argp, CLIENT *clnt)
 {
-	static char clnt_res;
+	static int clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, enviarNotificacion,
-		(xdrproc_t) xdr_notificacion, (caddr_t) argp,
-		(xdrproc_t) xdr_void, (caddr_t) &clnt_res,
+	if (clnt_call (clnt, generarTurno,
+		(xdrproc_t) xdr_nodo_hamburguesa, (caddr_t) argp,
+		(xdrproc_t) xdr_int, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
-	return ((void *)&clnt_res);
+	return (&clnt_res);
 }

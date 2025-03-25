@@ -4,15 +4,48 @@
  * as a guideline for developing your own functions.
  */
 
-#include "InterfaceClienteServidorPedidos.h"
-#include "InterfaceServidorPedidosServidorDisplay.h"
+#include "I_cli_pedidos.h"
+#include "I_coc_pedidos.h"
+#include "I_pedidos_display.h"
 #include <stdbool.h>
-
 
 int cantidadUsuariosFila=0;
 nodo_hamburguesa filaVirtual[10];
-void notificar_cocineros_1();
 cocinero vectorCocineros[3];
+int cocinerosEnLinea[3] = {0,0,0};
+
+/**
+ * @brief Notifica a los involucrados sobre actualizacion de peticiones
+ */
+void notificar_cocineros_1();
+
+/**
+ * @brief COnsulta el numero del siguiente cocinero disponible
+ * @return la pocision de un cocinero desocupado, si no hay retorna -1
+ */
+
+ int consultarNumeroCocineroDisponible();
+/**
+ * @breif Genera un turno para cocinar una hamburguesa, asignando el pedido a un cocinero
+ * @param nodo_hamburguesa *argp es la amgurguesa a agregar al pedido
+ * @return Cantidad de usuarios en la fila
+ */
+
+ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp);
+/**
+ * @brief Selecciona un cocinero para poder conectarse, validando si el id es valido
+ * @param int *argp id del cocinero a validar
+ * @return 1 si es exitoso, 0 si no es existoso
+ */
+int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp);
+
+/**
+ * @brief Termina un pedido para poder continuar con el flujo de pedidos
+ * @param int *argp id del cocinero que termino el pedido que actualmente tiene
+ * @return 1 si es posible, 0 si no es posible
+ */
+int * terminarpedido_1_svc(int *argp, struct svc_req *rqstp);
+
 int consultarNumeroCocineroDisponible() {
 	int posicion=-1;
 	for(int i = 0; i <3;i++){
@@ -30,18 +63,18 @@ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 	int posicion = consultarNumeroCocineroDisponible();
 
 	printf("\n");
-	printf(" Hambruguesa a preparar\n");
-	printf(" Nombre hamburguesa: %s\n", (*argp).nombreHamburguesa);
-	printf(" Tipo de hamburguesa: %d\n", (*argp).tipoHamburguesa);
-	printf(" Cantidad de ingreidientes extra: %d\n", (*argp).cantidadIngredientesExtra);
+	printf("> Generar Turno Hamburguesa\n");
+	printf("  Nombre hamburguesa: %s\n", (*argp).nombreHamburguesa);
+	printf("  Tipo de hamburguesa: %d\n", (*argp).tipoHamburguesa);
+	printf("  Cantidad de ingreidientes extra: %d\n", (*argp).cantidadIngredientesExtra);
 
 	if(posicion==-1){
-		printf(" Los cocineros se encuentran ocupados\n");
+		printf("  Los cocineros se encuentran ocupados\n");
 		filaVirtual[cantidadUsuariosFila]=*argp;
 		cantidadUsuariosFila++;
-		printf(" La hambruguesa se agrego a la fila virtual\n");
+		printf("  La hambruguesa se agrego a la fila virtual\n");
 	}else {
-		printf(" El cocinero en la posicion %d esta libre y se asginara a la hambrugeusa con nombre %s\n", (posicion+1), (*argp).nombreHamburguesa);
+		printf("  El cocinero en la posicion %d esta libre y se asginara a la hambrugeusa con nombre %s\n", (posicion+1), (*argp).nombreHamburguesa);
 		vectorCocineros[posicion].ocupado=true;
 		vectorCocineros[posicion].objHamburguesaAPreparar=*argp;
 	}
@@ -51,9 +84,8 @@ int * generarturno_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 	return &result;
 }
 
-void
-notificar_cocineros_1()
-{
+void notificar_cocineros_1() {
+	printf("> Notificando a los cocineros\n");
 	CLIENT *clnt;
 	void  *result_1;
 	char ipServidor[10];
@@ -80,10 +112,85 @@ notificar_cocineros_1()
 	objNotificacion.cantidadUsuariosFilaVirtual=cantidadUsuariosFila;
 
 	result_1 = enviarnotificacion_1(&objNotificacion, clnt);
+	printf("  Cocineros notificados\n");
 	if (result_1 == (void *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
+}
+
+
+int * seleccionaridcocinero_1_svc(int *argp, struct svc_req *rqstp) {
+	static int  result;
+	int indexCoc= (*argp)-1;
+	printf("> Validando cocinero %d\n", indexCoc+1);
+
+	//1. Validamos que sea un codigo valido
+	if(indexCoc<0 || indexCoc>3){
+		result = 0;
+		printf("  cocinero no valido\n");
+		return &result;
+	}
+
+	//2. Validamos que ya no este conectado
+
+	if( cocinerosEnLinea[indexCoc] != 0){
+		result = 0;
+		printf("  cocineor ya conectado %d\n", indexCoc);
+		return &result;
+	}
+	
+	//Pre. El cocinero no esta conectado y el codigo es valido 
+	//3. Guardamos su conexion
+
+	cocinerosEnLinea[indexCoc] = 1;
+
+	//4. Notificamos la conexion
+	result = 1;
+	printf("  cocinero logeado %d\n", indexCoc+1);
+	return &result;
+}
+
+int * terminarpedido_1_svc(int *argp, struct svc_req *rqstp) {
+	static int  result;
+	int indexCoc = (*argp)-1;
+	printf("> Terminando pedido del cocinero %d\n", indexCoc+1);
+
+
+	//1. Validar si el cocinero tiene un pedido
+	if(!vectorCocineros[indexCoc].ocupado){
+		result = 0;
+		printf("  Cocinero %d no tiene pedidos asignados\n", indexCoc+1);
+		return &result;
+	}
+	
+	//2. Se le asigna otro pedido al cocinero si hay pedidos en la fila
+	// - Si no hay mas en la fila, el cocinero queda libre
+	// - Si se atiende de la fila se debe mermar la cantidad de usuarios en la fila
+	
+	//Validacion si no hay fila
+	if(cantidadUsuariosFila==0){
+		vectorCocineros[indexCoc].ocupado=false;
+		notificar_cocineros_1();
+		result = 0;
+		printf("  Cocinero %d termino hamburguesa y queda libre\n", indexCoc+1);
+		return &result;
+	}
+	//pre. Hay usuarios en la fila
+	
+	//Asignamos al cocinero el siguiente pedido
+	vectorCocineros[indexCoc].objHamburguesaAPreparar=filaVirtual[0];
+	//Movemos la fila
+	for(int i=0;i<cantidadUsuariosFila-1;i++)
+		filaVirtual[i]=filaVirtual[i+1];
+	//Mermamos la fila
+	cantidadUsuariosFila--;
+
+	//3. Se debe notificar la actualizacion
+	notificar_cocineros_1();
+	result = 1;
+	printf("  Cocinero %d termino hamburguesa y se le asigna la hamburguesa %s\n", indexCoc+1,vectorCocineros[indexCoc].objHamburguesaAPreparar.nombreHamburguesa);
+	return &result;
 }
