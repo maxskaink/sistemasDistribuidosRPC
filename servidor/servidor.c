@@ -174,7 +174,7 @@ int * terminarpedido_1_svc(int *argp, struct svc_req *rqstp) {
 	if(cantidadUsuariosFila==0){
 		vectorCocineros[indexCoc].ocupado=false;
 		notificar_cocineros_1();
-		result = 0;
+		result = 1;
 		printf("  Cocinero %d termino hamburguesa y queda libre\n", indexCoc+1);
 		return &result;
 	}
